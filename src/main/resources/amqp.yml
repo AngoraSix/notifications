@@ -1,0 +1,32 @@
+# https://docs.spring.io/spring-cloud-stream/reference/rabbit/rabbit_overview/putting-it-all-together.html#page-title
+spring:
+  cloud:
+    function:
+      definition: notifications # to be used if we use Spring Cloud Function support https://docs.spring.io/spring-cloud-stream/reference/spring-cloud-stream/producing-and-consuming-messages.html#spring_cloud_function
+    stream:
+      bindings:
+        notifications-in-0: # binding name (<beanName>-<in/out>-<index>)
+          destination: ${A6_NOTIFICATIONS_RABBITMQ_INPUT_EXCHANGE:a6-exchange} # existing exchange (or creates)?
+          group: ${A6_NOTIFICATIONS_RABBITMQ_INPUT_QUEUE:notifications} # queue = a6-exchange.a6-queue
+#          consumer:
+#            max-attempts: 1
+      #          binder: a6Rabbit
+#      rabbit:
+#        bindings:
+#          notifications-in-0:
+##            consumer:
+##              bindingRoutingKey: ${A6_NOTIFICATIONS_RABBITMQ_INPUT_ROUTINGKEY:#} # defaults to '#'
+#              auto-bind-dlq: true
+#              dlq-ttl: true
+#              dlq-dead-letter-exchange:
+      binders:
+        a6Rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${A6_NOTIFICATIONS_RABBITMQ_HOST:localhost}
+                port: ${A6_NOTIFICATIONS_RABBITMQ_PORT:5672}
+                username: ${A6_NOTIFICATIONS_RABBITMQ_USER:user}
+                password: ${A6_NOTIFICATIONS_RABBITMQ_PASSWORD:pass}
+                virtual-host: ${A6_NOTIFICATIONS_RABBITMQ_VHOST:/}

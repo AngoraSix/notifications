@@ -1,0 +1,12 @@
+configs:
+  api:
+    basePaths:
+      notifications: "/notifications"
+    routes:
+      baseListCrudRoute: ""
+      listNotifications:
+        name: listNotifications
+        basePaths:
+          - ${configs.api.basePaths.notifications}
+        method: GET
+        path: ${configs.api.routes.baseListCrudRoute}

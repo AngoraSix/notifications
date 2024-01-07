@@ -1,0 +1,46 @@
+= Angorasix - Projects Core
+
+[[get-project]]
+== GET Single Project
+
+[discrete]
+=== Request:
+
+include::{snippets}/project-single/http-request.adoc[]
+include::{snippets}/project-single/path-parameters.adoc[]
+
+=== Response:
+
+include::{snippets}/project-single/http-response.adoc[]
+include::{snippets}/project-single/response-fields.adoc[]
+
+[[list-projects]]
+== GET Projects List
+
+=== Request:
+
+include::{snippets}/project-list/http-request.adoc[]
+
+=== Response:
+
+include::{snippets}/project-list/http-response.adoc[]
+include::{snippets}/project-list/response-fields.adoc[]
+
+[[create-project]]
+== POST New Project
+
+=== Request:
+
+include::{snippets}/project-create/http-request.adoc[]
+include::{snippets}/project-create/request-fields.adoc[]
+
+=== Response:
+
+include::{snippets}/project-create/http-response.adoc[]
+include::{snippets}/project-create/response-fields.adoc[]
+
+== Commons:
+
+=== Attribute:
+
+include::{snippets}/project-list/response-fields-attribute.adoc[]

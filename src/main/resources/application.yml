@@ -1,0 +1,14 @@
+context:
+  initializer:
+    classes: com.angorasix.notifications.BeansInitializer
+server:
+  port: ${A6_NOTIFICATIONS_PORT:9088}
+
+spring:
+  config:
+    import: classpath:/api.yml, classpath:/security.yml, classpath:/amqp.yml
+  application:
+    name: ${A6_NOTIFICATIONS_APP_NAME:notifications}
+  data:
+    mongodb:
+      uri: ${A6_NOTIFICATIONS_MONGO_DB_URI:mongodb://localhost:27017/}${A6_NOTIFICATIONS_MONGO_DB_NAME:a6-notifications}${A6_NOTIFICATIONS_MONGO_DB_PARAMS:?}
