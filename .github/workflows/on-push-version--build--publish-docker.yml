@@ -16,7 +16,7 @@ jobs:
     uses: AngoraSix/infra/.github/workflows/action-push-gcp-maven.yml@main
     with:
       app: notifications
-      cloud-service: projects-core
+      cloud-service: notifications
     secrets:
       wif-provider: ${{ secrets.WIF_PROVIDER }}
       wif-service-account: ${{ secrets.WIF_SERVICE_ACCOUNT }}

@@ -34,3 +34,15 @@ build/
 
 # OSX
 .DS_Store
+
+# Vim
+*.swp
+*.swo
+
+# patch
+*.orig
+*.rej
+
+# Local environment
+.env
+.java-version

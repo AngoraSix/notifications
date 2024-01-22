@@ -31,7 +31,7 @@ suspend fun initializeMongodb(
     template: ReactiveMongoTemplate,
     mapper: ObjectMapper,
 ) {
-    template.dropCollection("project").block()
+    template.dropCollection("notifications").block()
     val file: File = ClassPathResource(jsonFile).file
     val dataEntries: Collection<MutableMap<String, Any>> = mapper.readValue(file.inputStream())
 
@@ -42,7 +42,7 @@ suspend fun initializeMongodb(
             val document = Document(entry)
             template.insert(
                 document,
-                "project",
+                "notifications",
             )
                 .block()
         }

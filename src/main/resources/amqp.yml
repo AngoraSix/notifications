@@ -1,13 +1,17 @@
 # https://docs.spring.io/spring-cloud-stream/reference/rabbit/rabbit_overview/putting-it-all-together.html#page-title
+
 spring:
   cloud:
-    function:
-      definition: notifications # to be used if we use Spring Cloud Function support https://docs.spring.io/spring-cloud-stream/reference/spring-cloud-stream/producing-and-consuming-messages.html#spring_cloud_function
     stream:
       bindings:
-        notifications-in-0: # binding name (<beanName>-<in/out>-<index>)
-          destination: ${A6_NOTIFICATIONS_RABBITMQ_INPUT_EXCHANGE:a6-exchange} # existing exchange (or creates)?
-          group: ${A6_NOTIFICATIONS_RABBITMQ_INPUT_QUEUE:notifications} # queue = a6-exchange.a6-queue
+        notifications-in-0:
+          destination: ${A6_NOTIFICATIONS_RABBITMQ_EVENTS_INPUT_EXCHANGE:events} # existing exchange (or creates)?
+          group: ${A6_NOTIFICATIONS_RABBITMQ_EVENTS_INPUT_QUEUE:notifications} # queue = a6-exchange.a6-queue
+    function:
+      definition: notifications # to be used if we use Spring Cloud Function support https://docs.spring.io/spring-cloud-stream/reference/spring-cloud-stream/producing-and-consuming-messages.html#spring_cloud_function
+#    stream:
+#      function:
+#        autodetect: false
 #          consumer:
 #            max-attempts: 1
       #          binder: a6Rabbit
@@ -27,6 +31,6 @@ spring:
               rabbitmq:
                 host: ${A6_NOTIFICATIONS_RABBITMQ_HOST:localhost}
                 port: ${A6_NOTIFICATIONS_RABBITMQ_PORT:5672}
-                username: ${A6_NOTIFICATIONS_RABBITMQ_USER:user}
-                password: ${A6_NOTIFICATIONS_RABBITMQ_PASSWORD:pass}
+                username: ${A6_NOTIFICATIONS_RABBITMQ_USER:guest}
+                password: ${A6_NOTIFICATIONS_RABBITMQ_PASSWORD:guest}
                 virtual-host: ${A6_NOTIFICATIONS_RABBITMQ_VHOST:/}

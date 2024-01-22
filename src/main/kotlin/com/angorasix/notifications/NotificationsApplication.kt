@@ -7,7 +7,7 @@ import org.springframework.hateoas.config.EnableHypermediaSupport
 import org.springframework.hateoas.support.WebStack
 
 /**
- * Spring Boot main class for Projects Core.
+ * Spring Boot main class for Notifications.
  *
  * @author rozagerardo
  */

@@ -1,12 +1,8 @@
 package com.angorasix.notifications.messaging.handler
 
-import com.angorasix.commons.infrastructure.intercommunication.messaging.A6InfraMessageDto
+import com.angorasix.commons.infrastructure.intercommunication.messaging.dto.A6InfraMessageDto
 import org.springframework.context.annotation.Bean
-import org.springframework.messaging.Message
-import java.util.function.Consumer
-
-
-//fun messagingFn(): Consumer<String> {
+import org.springframework.context.annotation.Configuration
 
 /**
  * <p>
@@ -14,13 +10,10 @@ import java.util.function.Consumer
  *
  * @author rozagerardo
  */
-//@Bean("notifications")
-//fun notifications(): (String) -> Unit {
-//    return { println("Received: ${it}") }
-////    return Consumer<Message<A6InfraMessageDto>> { message -> println("Received: ${message}")}//.messageData} ${message.objectId} ${message.objectType} ${message.targetType} ${message.targetId} ${message}") }
-//}
-fun notifications(): Consumer<Message<A6InfraMessageDto>> {
-    return Consumer<Message<A6InfraMessageDto>> { message -> println("Received: ${message}")}//.messageData} ${message.objectId} ${message.objectType} ${message.targetType} ${message.targetId} ${message}") }
+@Configuration // spring-cloud-streams is not prepared to handle Kotlin DSL beans: https://github.com/spring-cloud/spring-cloud-stream/issues/2025
+class NotificationMessagingHandler {
+
+    @Bean
+    fun notifications(): (A6InfraMessageDto) -> Unit =
+        { message -> println("Received: $message") }
 }
-//    return Consumer<String> { message -> println("Received: ${message}") }
-//}

@@ -2,10 +2,8 @@ package com.angorasix.notifications.presentation.handler
 
 import com.angorasix.commons.domain.SimpleContributor
 import com.angorasix.commons.infrastructure.constants.AngoraSixInfrastructure
-import com.angorasix.commons.presentation.dto.A6MediaDto
 import com.angorasix.commons.presentation.handler.convertToDto
 import com.angorasix.commons.reactive.presentation.error.resolveBadRequest
-import com.angorasix.notifications.domain.notification.NotificationMedia
 import com.angorasix.notifications.application.NotificationService
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.infrastructure.config.configurationproperty.api.ApiConfigs
@@ -23,7 +21,7 @@ import org.springframework.web.reactive.function.server.bodyAndAwait
 import org.springframework.web.util.UriComponentsBuilder
 
 /**
- * Project Handler (Controller) containing all handler functions related to Project endpoints.
+ * Notifications Handler (Controller) containing all handler functions related to Notifications endpoints.
  *
  * @author rozagerardo
  */
@@ -49,7 +47,7 @@ class NotificationHandler(
                 requestingContributor,
             ).map {
                 it.convertToDto(
-                    requestingContributor,
+//                    requestingContributor,
                     apiConfigs,
                     request,
                 )
@@ -84,54 +82,23 @@ private fun Notification.convertToDto(): NotificationDto {
     )
 }
 
-
-private fun A6MediaDto.convertToDomain(): NotificationMedia {
-    return NotificationMedia(
-        mediaType,
-        url,
-        thumbnailUrl,
-        resourceId,
-    )
-}
-
-
 private fun Notification.convertToDto(
-    simpleContributor: SimpleContributor?,
+//    simpleContributor: SimpleContributor?,
     apiConfigs: ApiConfigs,
     request: ServerRequest,
-): NotificationDto = convertToDto().resolveHypermedia(simpleContributor, this, apiConfigs, request)
-
-//private fun NotificationDto.convertToDomain(
-//    contributorId: String,
-//    admins: Set<SimpleContributor>,
-//): Notification {
-//    return Notification(
-//        targetId,
-//        targetType,
-//        objectId,
-//        objectType,
-//        topic,
-//        isUnique,
-//        title,
-//        message,
-//        instantOfCreation,
-//        media?.convertToDomain(),
-//        alertLevel,
-//        refUri,
-//        contextData,
-//        instantOfIssue,
-//        needsExplicitDismiss,
-//        dismissed,
-//    )
-//}
+): NotificationDto = convertToDto().resolveHypermedia(
+    apiConfigs,
+    request,
+) // (simpleContributor, this, apiConfigs, request)
 
 private fun NotificationDto.resolveHypermedia(
-    simpleContributor: SimpleContributor?,
-    notification: Notification,
+//    simpleContributor: SimpleContributor?,
+//    notification: Notification,
     apiConfigs: ApiConfigs,
     request: ServerRequest,
 ): NotificationDto {
-    val getSingleRoute = apiConfigs.routes.listNotifications //TODO change this need get single notification
+    val getSingleRoute =
+        apiConfigs.routes.listNotifications // TODO change this need get single notification
     // self
     val selfLink =
         Link.of(uriBuilder(request).path(getSingleRoute.resolvePath()).build().toUriString())
@@ -139,24 +106,14 @@ private fun NotificationDto.resolveHypermedia(
     val selfLinkWithDefaultAffordance =
         Affordances.of(selfLink).afford(HttpMethod.OPTIONS).withName("default").toLink()
     add(selfLinkWithDefaultAffordance)
-
-//    // edit Project
-//    if (simpleContributor != null) {
-//        if (notification.isAdministeredBy(simpleContributor)) {
-//            val editProjectRoute = apiConfigs.routes.updateProject
-//            val editProjectLink = Link.of(
-//                uriBuilder(request).path(editProjectRoute.resolvePath()).build().toUriString(),
-//            ).withTitle(editProjectRoute.name).withName(editProjectRoute.name)
-//                .withRel(editProjectRoute.name).expand(id)
-//            val editProjectAffordanceLink = Affordances.of(editProjectLink).afford(HttpMethod.PUT)
-//                .withName(editProjectRoute.name).toLink()
-//            add(editProjectAffordanceLink)
-//        }
-//    }
     return this
 }
 
 private fun uriBuilder(request: ServerRequest) = request.requestPath().contextPath().let {
-    UriComponentsBuilder.fromHttpRequest(request.exchange().request).replacePath(it.toString()) //
-        .replaceQuery("")
+    UriComponentsBuilder.fromHttpRequest(request.exchange().request).replacePath(it.toString())
+//    ForwardedHeaderUtils.adaptFromForwardedHeaders(
+//        request.exchange().request.getURI(),
+//        request.exchange().request.getHeaders(),
+//    ).replacePath(it.toString()) //
+//        .replaceQuery("")
 }

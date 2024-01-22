@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.coRouter
 
 /**
- * Router for all Project related endpoints.
+ * Router for all Notifications related endpoints.
  *
  * @author rozagerardo
  */
@@ -18,11 +18,11 @@ class NotificationRouter(
 ) {
 
     /**
-     * Main RouterFunction configuration for all endpoints related to Projects.
+     * Main RouterFunction configuration for all endpoints related to Notifications.
      *
-     * @return the [RouterFunction] with all the routes for Projects
+     * @return the [RouterFunction] with all the routes for Notifications
      */
-    fun projectRouterFunction() = coRouter {
+    fun notificationRouterFunction() = coRouter {
         filter { request, next ->
             extractRequestingContributor(
                 request,

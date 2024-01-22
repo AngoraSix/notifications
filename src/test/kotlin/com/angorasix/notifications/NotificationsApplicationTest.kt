@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest(
     properties = ["spring.data.mongodb.uri=mongodb://" + "\${embedded.mongodb.host}:\${embedded.mongodb.port}/" + "\${embedded.mongodb.database}"],
 )
-class ProjectsCoreApplicationTest {
+class NotificationsApplicationTest {
 
     @Test
     fun contextLoads() {

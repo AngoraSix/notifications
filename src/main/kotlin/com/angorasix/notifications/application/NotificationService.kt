@@ -1,8 +1,8 @@
 package com.angorasix.notifications.application
 
 import com.angorasix.commons.domain.SimpleContributor
-import com.angorasix.notifications.domain.notification.NotificationRepository
 import com.angorasix.notifications.domain.notification.Notification
+import com.angorasix.notifications.domain.notification.NotificationRepository
 import com.angorasix.notifications.infrastructure.queryfilters.ListNotificationsFilter
 import kotlinx.coroutines.flow.Flow
 import reactor.core.publisher.Flux

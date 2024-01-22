@@ -1,7 +1,5 @@
 package com.angorasix.notifications.domain.notification
 
-import com.angorasix.notifications.domain.notification.AlertLevel
-import com.angorasix.notifications.domain.notification.NotificationMedia
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.PersistenceCreator
 import java.net.URI
