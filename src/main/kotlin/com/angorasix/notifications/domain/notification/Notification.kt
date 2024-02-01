@@ -20,15 +20,15 @@ data class Notification @PersistenceCreator private constructor(
     val objectType: String,
     val topic: String,
     val isUnique: Boolean,
-    val title: String,
-    val message: String,
-    val instantOfCreation: Instant, // instant in which the notification was created (internal)
+    val title: I18nText,
+    val message: I18nText,
+    val instantOfCreation: Instant = Instant.now(), // instant in which the notification was created (internal)
     val media: NotificationMedia?,
     val alertLevel: AlertLevel,
     val refUri: URI?,
 //    val actions: String?, // NOT TODO, will use HATEOAS for this?
     val contextData: Any?,
-    val instantOfIssue: Instant, // instant in which the (potentially external) event occurred
+    val instantOfIssue: Instant = Instant.now(), // instant in which the (potentially external) event occurred
     val needsExplicitDismiss: Boolean,
     val dismissed: Boolean,
 ) {
@@ -36,15 +36,15 @@ data class Notification @PersistenceCreator private constructor(
     /**
      * The final constructor that sets all initial fields.
      */
-    constructor(
+    private constructor(
         targetId: String,
         targetType: String,
         objectId: String,
         objectType: String,
         topic: String,
         isUnique: Boolean,
-        title: String,
-        message: String,
+        title: I18nText,
+        message: I18nText,
         instantOfCreation: Instant,
         media: NotificationMedia?,
         alertLevel: AlertLevel = AlertLevel.INFO,
@@ -72,4 +72,87 @@ data class Notification @PersistenceCreator private constructor(
         needsExplicitDismiss,
         dismissed,
     )
+
+
+    data class Builder(
+        var targetId: String,
+        var targetType: String,
+        var objectId: String,
+        var objectType: String,
+        var topic: String,
+        var isUnique: Boolean = false,
+        var title: I18nText? = null,
+        var message: I18nText? = null,
+        var instantOfCreation: Instant = Instant.now(),
+        var media: NotificationMedia? = null,
+        var alertLevel: AlertLevel = AlertLevel.INFO,
+        var refUri: URI? = null,
+        var contextData: Any? = null,
+        var instantOfIssue: Instant = Instant.now(),
+        var needsExplicitDismiss: Boolean = false,
+    ) {
+
+        var ignoreNotification: Boolean = false
+        fun media(media: NotificationMedia) = apply {
+            this.media = media
+        }
+
+        fun unique(isUnique: Boolean) = apply {
+            this.isUnique = isUnique
+        }
+
+        fun title(title: I18nText) = apply {
+            this.title = title
+        }
+
+        fun message(message: I18nText) = apply {
+            this.message = message
+        }
+
+        fun text(title: I18nText, message: I18nText) = apply {
+            this.title = title
+            this.message = message
+        }
+
+        fun alertLeveL(alertLevel: AlertLevel) = apply {
+            this.alertLevel = alertLevel
+        }
+
+        fun instantOfIssue(instantOfIssue: Instant) = apply {
+            this.instantOfIssue = instantOfIssue
+        }
+
+        fun needsExplicitDismiss(needsExplicitDismiss: Boolean) = apply {
+            this.needsExplicitDismiss = needsExplicitDismiss
+        }
+
+        fun ignoreNotification(ignoreNotification: Boolean) = apply {
+            this.ignoreNotification = ignoreNotification
+        }
+
+        fun build(): Notification? {
+            return if (!this.ignoreNotification && this.title != null && this.message != null) {
+                Notification(
+                    this.targetId,
+                    this.targetType,
+                    this.objectId,
+                    this.objectType,
+                    this.topic,
+                    this.isUnique,
+                    this.title!!,
+                    this.message!!,
+                    this.instantOfCreation,
+                    this.media,
+                    this.alertLevel,
+                    this.refUri,
+                    this.contextData,
+                    this.instantOfIssue,
+                    this.needsExplicitDismiss,
+                    false,
+                )
+            } else {
+                null
+            }
+        }
+    }
 }

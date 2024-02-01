@@ -1,8 +1,11 @@
 package com.angorasix.notifications.application
 
 import com.angorasix.commons.domain.SimpleContributor
+import com.angorasix.commons.infrastructure.intercommunication.messaging.dto.A6InfraMessageDto
+import com.angorasix.notifications.application.strategies.determineHandlingStrategy
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.domain.notification.NotificationRepository
+import com.angorasix.notifications.infrastructure.config.i18n.I18nConfigKeys
 import com.angorasix.notifications.infrastructure.queryfilters.ListNotificationsFilter
 import kotlinx.coroutines.flow.Flow
 import reactor.core.publisher.Flux
@@ -13,7 +16,12 @@ import reactor.core.publisher.Mono
  *
  * @author rozagerardo
  */
-class NotificationService(private val repository: NotificationRepository) {
+class NotificationService(
+    private val repository: NotificationRepository,
+    private val i18nKeys: I18nConfigKeys,
+) {
+
+//    suspend fun processContributorNotification(targetContributorId: String, objectId: String, objectType: String, requestingContributor: DetailedContributor): Notification = repository.save(null)
 
     /**
      * Method to retrieve a collection of [Notification]s.
@@ -35,4 +43,9 @@ class NotificationService(private val repository: NotificationRepository) {
         filter: ListNotificationsFilter,
         contributor: SimpleContributor,
     ) = repository.dismissForContributorUsingFilter(filter, contributor)
+
+    suspend fun processMessage(
+        message: A6InfraMessageDto,
+    ): Notification? =
+        determineHandlingStrategy(message)?.processMessage(message, repository, i18nKeys)
 }

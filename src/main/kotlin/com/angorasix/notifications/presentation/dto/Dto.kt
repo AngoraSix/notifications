@@ -2,6 +2,7 @@ package com.angorasix.notifications.presentation.dto
 
 import com.angorasix.commons.presentation.dto.A6MediaDto
 import com.angorasix.notifications.domain.notification.AlertLevel
+import com.fasterxml.jackson.annotation.JsonUnwrapped
 import org.springframework.hateoas.RepresentationModel
 import java.net.URI
 import java.time.Instant
@@ -19,8 +20,8 @@ data class NotificationDto(
     val objectType: String? = null,
     val topic: String? = null,
     val isUnique: Boolean? = null,
-    val title: String? = null,
-    val message: String? = null,
+    val title: I18TextDto? = null,
+    val message: I18TextDto? = null,
     val instantOfCreation: Instant? = null,
     val media: A6MediaDto? = null,
     val alertLevel: AlertLevel? = null,
@@ -31,9 +32,11 @@ data class NotificationDto(
     val dismissed: Boolean? = null,
 ) : RepresentationModel<NotificationDto>()
 
-data class PresentationMediaDto(
-    override val mediaType: String,
-    override val url: String,
-    override val thumbnailUrl: String,
-    override val resourceId: String,
-) : A6MediaDto(mediaType, url, thumbnailUrl, resourceId)
+//data class PresentationMediaDto(
+//    override val mediaType: String,
+//    override val url: String,
+//    override val thumbnailUrl: String,
+//    override val resourceId: String,
+//) : A6MediaDto(mediaType, url, thumbnailUrl, resourceId)
+
+data class I18TextDto(@JsonUnwrapped val i18n: Map<String, String>)

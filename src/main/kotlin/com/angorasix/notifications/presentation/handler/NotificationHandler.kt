@@ -5,9 +5,12 @@ import com.angorasix.commons.infrastructure.constants.AngoraSixInfrastructure
 import com.angorasix.commons.presentation.handler.convertToDto
 import com.angorasix.commons.reactive.presentation.error.resolveBadRequest
 import com.angorasix.notifications.application.NotificationService
+import com.angorasix.notifications.domain.notification.I18nText
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.infrastructure.config.configurationproperty.api.ApiConfigs
+import com.angorasix.notifications.infrastructure.config.i18n.I18nConfigValues
 import com.angorasix.notifications.infrastructure.queryfilters.ListNotificationsFilter
+import com.angorasix.notifications.presentation.dto.I18TextDto
 import com.angorasix.notifications.presentation.dto.NotificationDto
 import kotlinx.coroutines.flow.map
 import org.springframework.hateoas.Link
@@ -28,6 +31,7 @@ import org.springframework.web.util.UriComponentsBuilder
 class NotificationHandler(
     private val service: NotificationService,
     private val apiConfigs: ApiConfigs,
+    private val i18nConfigValues: I18nConfigValues,
 ) {
 
     /**
@@ -50,6 +54,7 @@ class NotificationHandler(
 //                    requestingContributor,
                     apiConfigs,
                     request,
+                    i18nConfigValues,
                 )
             }.let {
                 ok().contentType(MediaTypes.HAL_FORMS_JSON).bodyAndAwait(it)
@@ -60,7 +65,7 @@ class NotificationHandler(
     }
 }
 
-private fun Notification.convertToDto(): NotificationDto {
+private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): NotificationDto {
     return NotificationDto(
         id,
         targetId,
@@ -69,8 +74,8 @@ private fun Notification.convertToDto(): NotificationDto {
         objectType,
         topic,
         isUnique,
-        title,
-        message,
+        title.toDto(i18nConfigValues),
+        message.toDto(i18nConfigValues),
         instantOfCreation,
         media?.convertToDto(),
         alertLevel,
@@ -86,7 +91,8 @@ private fun Notification.convertToDto(
 //    simpleContributor: SimpleContributor?,
     apiConfigs: ApiConfigs,
     request: ServerRequest,
-): NotificationDto = convertToDto().resolveHypermedia(
+    i18nConfigValues: I18nConfigValues,
+): NotificationDto = convertToDto(i18nConfigValues).resolveHypermedia(
     apiConfigs,
     request,
 ) // (simpleContributor, this, apiConfigs, request)
@@ -116,4 +122,22 @@ private fun uriBuilder(request: ServerRequest) = request.requestPath().contextPa
 //        request.exchange().request.getHeaders(),
 //    ).replacePath(it.toString()) //
 //        .replaceQuery("")
+}
+
+private fun I18nText.toDto(i18nValues: I18nConfigValues): I18TextDto {
+    val i18nFormatted = i18nValues.values[targetType]?.get(i18nKey)
+        ?.map { (locale, valueWithPlaceholder) ->
+            val formattedText =
+                placeholderParams?.entries?.fold(valueWithPlaceholder) { accString, (pattern, newReplacement) ->
+                    accString.replace(":$pattern", newReplacement)
+                } ?: valueWithPlaceholder
+            (locale to formattedText).toEntry()
+        }
+        ?.associateBy({ it.key }, { it.value }) ?: emptyMap()
+    return I18TextDto(i18nFormatted)
+}
+
+fun <K, V> Pair<K, V>.toEntry() = object : Map.Entry<K, V> {
+    override val key: K = first
+    override val value: V = second
 }

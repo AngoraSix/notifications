@@ -1,8 +1,7 @@
 package com.angorasix.notifications.messaging.handler
 
 import com.angorasix.commons.infrastructure.intercommunication.messaging.dto.A6InfraMessageDto
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import com.angorasix.notifications.application.NotificationService
 
 /**
  * <p>
@@ -10,10 +9,10 @@ import org.springframework.context.annotation.Configuration
  *
  * @author rozagerardo
  */
-@Configuration // spring-cloud-streams is not prepared to handle Kotlin DSL beans: https://github.com/spring-cloud/spring-cloud-stream/issues/2025
-class NotificationMessagingHandler {
+class NotificationMessagingHandler(private val notificationService: NotificationService) {
 
-    @Bean
-    fun notifications(): (A6InfraMessageDto) -> Unit =
-        { message -> println("Received: $message") }
+    suspend fun handleMessage(message: A6InfraMessageDto) {
+        notificationService.processMessage(message)
+    }
 }
+

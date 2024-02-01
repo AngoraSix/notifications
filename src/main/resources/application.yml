@@ -6,7 +6,7 @@ server:
 
 spring:
   config:
-    import: classpath:/api.yml, classpath:/security.yml, classpath:/amqp.yml
+    import: classpath:/api.yml, classpath:/security.yml, classpath:/amqp.yml, classpath:/i18n-config.yml, classpath:/i18n/clubs.yml
   application:
     name: ${A6_NOTIFICATIONS_APP_NAME:notifications}
   data:

@@ -16,7 +16,10 @@ import org.springframework.hateoas.support.WebStack
     type = [EnableHypermediaSupport.HypermediaType.HAL_FORMS],
     stacks = [WebStack.WEBFLUX],
 )
-@ConfigurationPropertiesScan("com.angorasix.notifications.infrastructure.config.configurationproperty.api")
+@ConfigurationPropertiesScan(
+    "com.angorasix.notifications.infrastructure.config.configurationproperty.api",
+    "com.angorasix.notifications.infrastructure.config.i18n",
+)
 class NotificationsApplication
 
 /**
