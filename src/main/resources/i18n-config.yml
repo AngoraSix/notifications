@@ -2,9 +2,9 @@ configs:
   i18n:
     keys:
       clubsContributorAddedTitle: "CLUBS.CONTRIBUTOR-ADDED.TITLE"
-      clubsContributorAddedMessage: "CLUBS.CONTRIBUTOR-ADDED.TITLE"
+      clubsContributorAddedMessage: "CLUBS.CONTRIBUTOR-ADDED.MESSAGE"
       clubMemberAddedTitle: "CLUBS.MEMBER-ADDED.TITLE"
-      clubMemberAddedMessage: "CLUBS.MEMBER-ADDED.TITLE"
+      clubMemberAddedMessage: "CLUBS.MEMBER-ADDED.MESSAGE"
     supported-locales:
       en: en
       es: es
