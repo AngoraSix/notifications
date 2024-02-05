@@ -15,6 +15,6 @@ import org.springframework.context.annotation.Configuration
 class NotificationMessagingRouter(val handler: NotificationMessagingHandler) {
 
     @Bean
-    fun notifications(): suspend (A6InfraMessageDto) -> Unit =
+    fun notifications(): (A6InfraMessageDto) -> Unit =
         { handler.handleMessage(it) }
 }

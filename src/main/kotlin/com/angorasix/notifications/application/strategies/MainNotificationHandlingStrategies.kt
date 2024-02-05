@@ -6,6 +6,7 @@ import com.angorasix.notifications.application.strategies.fields.determineFields
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.domain.notification.NotificationRepository
 import com.angorasix.notifications.infrastructure.config.i18n.I18nConfigKeys
+import kotlinx.coroutines.flow.Flow
 
 /**
  * <p>
@@ -18,22 +19,22 @@ class MessageMapperStrategies {
 }
 
 interface MainNotificationHandlingStrategy {
-    suspend fun processMessage(
+    fun processMessage(
         message: A6InfraMessageDto,
         notificationRepository: NotificationRepository,
         i18nKeys: I18nConfigKeys,
-    ): Notification?
+    ): Flow<Notification>?
 }
 
 class ContributorEventMapperStrategy : MainNotificationHandlingStrategy {
-    override suspend fun processMessage(
+    override fun processMessage(
         message: A6InfraMessageDto,
         notificationRepository: NotificationRepository,
         i18nKeys: I18nConfigKeys,
-    ): Notification? {
+    ): Flow<Notification>? {
         val strategy = determineFieldsStrategy(message)
         return strategy?.mapNotificationFields(message, i18nKeys)
-            ?.let { notificationRepository.save(it) }
+            ?.let { notificationRepository.saveAll(it) }
     }
 }
 

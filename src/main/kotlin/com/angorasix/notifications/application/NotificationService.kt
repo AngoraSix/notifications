@@ -44,8 +44,8 @@ class NotificationService(
         contributor: SimpleContributor,
     ) = repository.dismissForContributorUsingFilter(filter, contributor)
 
-    suspend fun processMessage(
+    fun processMessage(
         message: A6InfraMessageDto,
-    ): Notification? =
+    ): Flow<Notification>? =
         determineHandlingStrategy(message)?.processMessage(message, repository, i18nKeys)
 }

@@ -7,6 +7,8 @@ import com.angorasix.notifications.domain.notification.I18nText
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.domain.notification.NotificationMedia
 import com.angorasix.notifications.infrastructure.config.i18n.I18nConfigKeys
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 /**
  * <p>
@@ -19,7 +21,7 @@ class AddMemberEventStrategy : NotificationFieldMappingStrategy() {
         message: A6InfraMessageDto,
         builder: Notification.Builder,
         i18nKeys: I18nConfigKeys,
-    ): Notification? {
+    ): Flow<Notification>? {
         val titleI18n: I18nText
         val messageI18n: I18nText
         val clubType = message.messageData["type"]
@@ -48,7 +50,7 @@ class AddMemberEventStrategy : NotificationFieldMappingStrategy() {
         println(messageI18n)
         builder.text(titleI18n, messageI18n)
         message.requestingContributor.profileMedia?.let { builder.media(it.toNotificationMedia()) }
-        return builder.build()
+        return builder.build()?.let { flowOf(it) }
     }
 }
 
@@ -56,7 +58,7 @@ abstract class NotificationFieldMappingStrategy {
     fun mapNotificationFields(
         inputMessage: A6InfraMessageDto,
         i18nKeys: I18nConfigKeys,
-    ): Notification? {
+    ): Flow<Notification>? {
         val builder = Notification.Builder(
             inputMessage.targetId,
             inputMessage.targetType.value,
@@ -71,7 +73,7 @@ abstract class NotificationFieldMappingStrategy {
         inputMessage: A6InfraMessageDto,
         notificationBuilder: Notification.Builder,
         i18nKeys: I18nConfigKeys,
-    ): Notification?
+    ): Flow<Notification>?
 }
 
 fun determineFieldsStrategy(message: A6InfraMessageDto): NotificationFieldMappingStrategy? {
