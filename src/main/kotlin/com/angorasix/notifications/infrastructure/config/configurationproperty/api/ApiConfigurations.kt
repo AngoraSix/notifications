@@ -19,11 +19,15 @@ data class ApiConfigs(
     var basePaths: BasePathConfigs,
 )
 
-data class BasePathConfigs constructor(val notifications: String)
+data class BasePathConfigs(val notifications: String)
 
-data class RoutesConfigs constructor(
+data class RoutesConfigs(
     val baseListCrudRoute: String,
+    val baseByIdCrudRoute: String,
     val listNotifications: Route,
+    val listenNotifications: Route,
+    val dismissNotification: Route,
+    val dismissAllNotifications: Route,
 )
 
 data class Route(

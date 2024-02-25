@@ -10,8 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  */
 @ConfigurationProperties(prefix = "configs.i18n.keys")
 data class I18nConfigKeys(
-    var clubsContributorAddedTitle: String,
-    var clubsContributorAddedMessage: String,
+    var clubContributorAddedTitle: String,
+    var clubContributorAddedMessage: String,
     var clubMemberAddedTitle: String,
     var clubMemberAddedMessage: String,
 )

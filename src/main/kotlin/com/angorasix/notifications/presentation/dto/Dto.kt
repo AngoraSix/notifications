@@ -3,6 +3,7 @@ package com.angorasix.notifications.presentation.dto
 import com.angorasix.commons.presentation.dto.A6MediaDto
 import com.angorasix.notifications.domain.notification.AlertLevel
 import com.fasterxml.jackson.annotation.JsonUnwrapped
+import org.springframework.hateoas.PagedModel
 import org.springframework.hateoas.RepresentationModel
 import java.net.URI
 import java.time.Instant
@@ -28,15 +29,16 @@ data class NotificationDto(
     val refUri: URI? = null,
     val contextData: Any? = null,
     val instantOfIssue: Instant? = null,
-    val needsExplicitDismiss: Boolean? = null,
-    val dismissed: Boolean? = null,
+    val needsExplicitDismiss: Boolean,
+    val dismissed: Boolean,
 ) : RepresentationModel<NotificationDto>()
 
-//data class PresentationMediaDto(
-//    override val mediaType: String,
-//    override val url: String,
-//    override val thumbnailUrl: String,
-//    override val resourceId: String,
-//) : A6MediaDto(mediaType, url, thumbnailUrl, resourceId)
-
 data class I18TextDto(@JsonUnwrapped val i18n: Map<String, String>)
+
+class A6PageMetadata(pageSize: Long, page: Long, total: Long, totalToRead: Long) :
+    PagedModel.PageMetadata(pageSize, page, total) {
+    val totalToRead = totalToRead
+        get() {
+            return field
+        }
+}

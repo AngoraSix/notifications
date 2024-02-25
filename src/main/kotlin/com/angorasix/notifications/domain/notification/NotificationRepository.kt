@@ -11,5 +11,4 @@ import org.springframework.data.repository.kotlin.CoroutineSortingRepository
  */
 interface NotificationRepository :
     CoroutineCrudRepository<Notification, String>,
-    CoroutineSortingRepository<Notification, String>,
     NotificationFilterRepository

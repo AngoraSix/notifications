@@ -4,9 +4,28 @@ configs:
       notifications: "/notifications"
     routes:
       baseListCrudRoute: ""
+      baseByIdCrudRoute: "/{id}"
       listNotifications:
         name: listNotifications
         basePaths:
           - ${configs.api.basePaths.notifications}
         method: GET
         path: ${configs.api.routes.baseListCrudRoute}
+      listenNotifications:
+        name: listenNotifications
+        basePaths:
+          - ${configs.api.basePaths.notifications}
+        method: GET
+        path: ${configs.api.routes.baseListCrudRoute}
+      dismissAllNotifications:
+        name: dismissAllNotifications
+        basePaths:
+          - ${configs.api.basePaths.notifications}
+        method: PATCH
+        path: ${configs.api.routes.baseListCrudRoute}
+      dismissNotification:
+        name: dismissNotification
+        basePaths:
+          - ${configs.api.basePaths.notifications}
+        method: PATCH
+        path: ${configs.api.routes.baseByIdCrudRoute}
