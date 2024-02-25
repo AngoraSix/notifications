@@ -4,11 +4,13 @@ import com.angorasix.commons.domain.SimpleContributor
 import com.angorasix.commons.infrastructure.intercommunication.A6DomainResource
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.infrastructure.queryfilters.ListNotificationsFilter
+import com.angorasix.notifications.infrastructure.queryfilters.SortOrder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrDefault
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoOperations
 import org.springframework.data.mongodb.core.aggregation.Aggregation.count
 import org.springframework.data.mongodb.core.aggregation.Aggregation.facet
@@ -17,6 +19,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
 import org.springframework.data.mongodb.core.aggregation.Aggregation.skip
+import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import org.springframework.data.mongodb.core.aggregation.ArrayOperators
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Criteria.where
@@ -36,19 +39,15 @@ class NotificationFilterRepositoryImpl(val mongoOps: ReactiveMongoOperations) :
         filter: ListNotificationsFilter,
         simpleContributor: SimpleContributor,
     ): NotificationListProjection {
-        println("WHATA")
-        println(filter)
-//        return mongoOps.aggregate(Aggregates.facet(match()))
-
-//        long total = getCount(<your property name>, <your property value>);
-//
+        val sortFilter = filter.sort.map { Sort.Order(mapSort(it.second), it.first) }
         var aggregation = newAggregation(
             match(
                 where("targetType").`is`(A6DomainResource.CONTRIBUTOR.value).and("targetId")
                     .`is`(simpleContributor.contributorId),
             ),
+            sort(Sort.by(sortFilter)),
             facet(
-                skip((filter.page * filter.pageSize).toLong()),
+                skip((filter.page * filter.pageSize + filter.extraSkip).toLong()),
                 limit(filter.pageSize.toLong()),
             ).`as`("data")
                 .and(count().`as`("total")).`as`("total")
@@ -62,11 +61,7 @@ class NotificationFilterRepositoryImpl(val mongoOps: ReactiveMongoOperations) :
                 .and("total.total").`as`("total")
                 .and("totalToRead.totalToRead").`as`("totalToRead"),
         )
-//            facet(count().`as`("total")).`as`("total"),
-//            facet(match(where("dismissed").`is`(false)), count().`as`("total")).`as`("totalToRead"),
-//        )
 
-//
         val result: NotificationListProjection = mongoOps.aggregate(
             aggregation,
             Notification::class.java,
@@ -76,13 +71,8 @@ class NotificationFilterRepositoryImpl(val mongoOps: ReactiveMongoOperations) :
         )
         result.page = filter.page
         result.pageSize = filter.pageSize
+        result.extraSkip = filter.extraSkip
         return result
-
-        //.getMappedResults();
-//
-//        return new PageImpl<>(results, pageable, total);
-//        mongoOps.aggre
-//        return mongoOps.find(filter.toQuery(simpleContributor), Notification::class.java).asFlow()
     }
 
     override suspend fun dismissForContributorUsingFilter(
@@ -131,3 +121,10 @@ private fun ListNotificationsFilter.toDismissQuery(simpleContributor: SimpleCont
 }
 
 private fun dismissUpdate() = Update().set("dismissed", true)
+
+private fun mapSort(order: SortOrder): Sort.Direction {
+    return when (order) {
+        SortOrder.ASC -> Sort.Direction.ASC
+        SortOrder.DESC -> Sort.Direction.DESC
+    }
+}

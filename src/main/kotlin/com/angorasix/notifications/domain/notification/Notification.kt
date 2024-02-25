@@ -26,7 +26,6 @@ data class Notification @PersistenceCreator private constructor(
     val media: NotificationMedia?,
     val alertLevel: AlertLevel,
     val refUri: URI?,
-//    val actions: String?, // NOT TODO, will use HATEOAS for this?
     val contextData: Any?,
     val instantOfIssue: Instant = Instant.now(), // instant in which the (potentially external) event occurred
     val needsExplicitDismiss: Boolean,

@@ -22,8 +22,6 @@ class NotificationService(
     private val i18nKeys: I18nConfigKeys,
 ) {
 
-//    suspend fun processContributorNotification(targetContributorId: String, objectId: String, objectType: String, requestingContributor: DetailedContributor): Notification = repository.save(null)
-
     /**
      * Method to retrieve a collection of [Notification]s.
      *

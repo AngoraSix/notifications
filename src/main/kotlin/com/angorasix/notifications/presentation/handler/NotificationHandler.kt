@@ -64,14 +64,6 @@ class NotificationHandler(
                 ),
                 requestingContributor,
             ).convertToDto(apiConfigs, request, i18nConfigValues)
-//                .map {
-//                it.convertToDto(
-////                    requestingContributor,
-//                    apiConfigs,
-//                    request,
-//                    i18nConfigValues,
-//                )
-//            }
                 .let {
                     ok().contentType(MediaTypes.HAL_FORMS_JSON).bodyValueAndAwait(it)
                 }
@@ -94,7 +86,6 @@ class NotificationHandler(
                 requestingContributor,
             ).map {
                 it?.convertToDto(
-//                    requestingContributor,
                     apiConfigs,
                     request,
                     i18nConfigValues,
@@ -102,11 +93,9 @@ class NotificationHandler(
             }
                 .map {
                     objectMapper.writeValueAsString(it)
-//                    ServerSentEvent.builder(it).build()
                 }
                 .filterNotNull().let {
                     ok().sse().bodyAndAwait(it)
-//                    ok().contentType(MediaType.APPLICATION_NDJSON).bodyAndAwait(it)
                 }
         } else {
             resolveBadRequest("Invalid Contributor Header", "Contributor Header")
@@ -139,22 +128,21 @@ private fun NotificationListProjection.convertToDto(
     request: ServerRequest,
     i18nConfigValues: I18nConfigValues,
 ): PagedModel<NotificationDto> {
-    println("GERRRRCHHH")
-    println(i18nConfigValues.values.toString())
-//    // Fix this when Spring HATEOAS provides consistent support for reactive/coroutines
+    // Fix this when Spring HATEOAS provides consistent support for reactive/coroutines
     val dtoResources = this.data.map { it.convertToDto(apiConfigs, request, i18nConfigValues) }
     val pagedMetadata =
-        A6PageMetadata(pageSize.toLong(), page.toLong(), total.toLong(), totalToRead.toLong())
+        A6PageMetadata(
+            pageSize.toLong(),
+            page.toLong(),
+            total.toLong(),
+            totalToRead.toLong(),
+            extraSkip.toLong(),
+        )
     val pagedModel = if (dtoResources.isNullOrEmpty()) {
         PagedModel.empty(pagedMetadata, NotificationDto::class.java)
     } else {
         PagedModel.of(dtoResources, pagedMetadata).withFallbackType(NotificationDto::class.java)
     }
-//    val nextPage = if ((page * pageSize) >= total) {
-//        null
-//    } else {
-//        page + 1
-//    }
     return pagedModel.resolveHypermedia(
         apiConfigs,
         request,
@@ -184,23 +172,20 @@ private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): Notif
 }
 
 private fun Notification.convertToDto(
-//    simpleContributor: SimpleContributor?,
     apiConfigs: ApiConfigs,
     request: ServerRequest,
     i18nConfigValues: I18nConfigValues,
 ): NotificationDto = convertToDto(i18nConfigValues).resolveHypermedia(
     apiConfigs,
     request,
-) // (simpleContributor, this, apiConfigs, request)
+)
 
 private fun NotificationDto.resolveHypermedia(
-//    simpleContributor: SimpleContributor?,
-//    notification: Notification,
     apiConfigs: ApiConfigs,
     request: ServerRequest,
 ): NotificationDto {
     val getSingleRoute =
-        apiConfigs.routes.listenNotifications // TODO change this need get single notification
+        apiConfigs.routes.listenNotifications // TODO change this need get single notification?
     // self
     val selfLink =
         Link.of(uriBuilder(request).path(getSingleRoute.resolvePath()).build().toUriString())
@@ -229,11 +214,6 @@ private fun NotificationDto.resolveHypermedia(
 
 private fun uriBuilder(request: ServerRequest) = request.requestPath().contextPath().let {
     UriComponentsBuilder.fromHttpRequest(request.exchange().request).replacePath(it.toString())
-//    ForwardedHeaderUtils.adaptFromForwardedHeaders(
-//        request.exchange().request.getURI(),
-//        request.exchange().request.getHeaders(),
-//    ).replacePath(it.toString()) //
-//        .replaceQuery("")
 }
 
 private fun I18nText.toDto(i18nValues: I18nConfigValues): I18TextDto {

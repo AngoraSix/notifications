@@ -18,31 +18,34 @@ data class ListNotificationsFilter(
         "dismissed" to SortOrder.DESC,
         "instantOfCreation" to SortOrder.DESC,
     ),
+    val extraSkip: Int = 0,
 ) {
     companion object {
         fun fromMultiValueMap(
             multiMap: MultiValueMap<String, String>,
         ): ListNotificationsFilter {
-            println("FILTERRR")
-            println(multiMap)
             return ListNotificationsFilter(
                 multiMap.getFirst(ApiConstants.IDS_QUERY_PARAM.value)?.split(","),
                 multiMap.getFirst(ApiConstants.DISMISSED_QUERY_PARAM.value)?.toBoolean(),
                 multiMap.getFirst(ApiConstants.PAGE_QUERY_PARAM.value)?.toInt() ?: 0,
                 multiMap.getFirst(ApiConstants.PAGESIZE_QUERY_PARAM.value)?.toInt() ?: 20,
-                multiMap.getFirst(ApiConstants.SORT_QUERY_PARAM.value)?.split(",")?.map {
-                    val sortRaw = it.split("+", "-")
-                    val sortOrder = if (sortRaw[0] === "+") {
-                        SortOrder.ASC
-                    } else {
-                        SortOrder.DESC
+                multiMap.getFirst(ApiConstants.SORT_QUERY_PARAM.value)
+                    ?.split(",")
+                    ?.map {
+                        val order = it.substring(0, 1)
+                        val field = it.substring(1)
+                        val sortOrder = if (order == ">") {
+                            SortOrder.DESC
+                        } else {
+                            SortOrder.ASC
+                        }
+                        field to sortOrder
                     }
-                    if (sortRaw.size === 2) (sortRaw[1] to sortOrder) else sortRaw[0] to sortOrder
-                }
                     ?: listOf(
                         "dismissed" to SortOrder.DESC,
                         "instantOfCreation" to SortOrder.DESC,
                     ),
+                multiMap.getFirst(ApiConstants.EXTRA_SKIP_QUERY_PARAM.value)?.toInt() ?: 0,
             )
         }
     }

@@ -11,5 +11,6 @@ enum class ApiConstants(val value: String) {
     DISMISSED_QUERY_PARAM("dismissed"),
     PAGE_QUERY_PARAM("page"),
     PAGESIZE_QUERY_PARAM("pageSize"),
-    SORT_QUERY_PARAM("sort")
+    SORT_QUERY_PARAM("sort"),
+    EXTRA_SKIP_QUERY_PARAM("extraSkip")
 }

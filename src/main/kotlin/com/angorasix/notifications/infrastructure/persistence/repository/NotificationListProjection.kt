@@ -15,19 +15,19 @@ data class NotificationListProjection(
     val totalToRead: Int = 0,
     var page: Int = 0,
     var pageSize: Int = 20,
+    var extraSkip: Int = 0,
 ) {
     @PersistenceCreator
     constructor(
         data: List<Notification>,
-        total: Int = 0, //List<Map<String, Int>?>?,
-        totalToRead: Int = 0, //List<Map<String, Int>?>?,
+        total: Int = 0,
+        totalToRead: Int = 0,
     ) : this(
         data,
         total,
         totalToRead,
-//        total?.get(0)?.get("total") ?: 0,
-//        totalToRead?.get(0)?.get("totalToRead") ?: 0,
         0,
         20,
+        0,
     )
 }

@@ -35,10 +35,8 @@ data class NotificationDto(
 
 data class I18TextDto(@JsonUnwrapped val i18n: Map<String, String>)
 
-class A6PageMetadata(pageSize: Long, page: Long, total: Long, totalToRead: Long) :
+class A6PageMetadata(pageSize: Long, page: Long, total: Long, totalToRead: Long, extraSkip: Long) :
     PagedModel.PageMetadata(pageSize, page, total) {
     val totalToRead = totalToRead
-        get() {
-            return field
-        }
+    val extraSkip = extraSkip
 }
