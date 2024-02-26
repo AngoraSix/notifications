@@ -2,8 +2,10 @@ package com.angorasix.notifications.presentation.handler
 
 import com.angorasix.commons.domain.SimpleContributor
 import com.angorasix.commons.infrastructure.constants.AngoraSixInfrastructure
+import com.angorasix.commons.presentation.dto.BulkPatch
 import com.angorasix.commons.presentation.handler.convertToDto
 import com.angorasix.commons.reactive.presentation.error.resolveBadRequest
+import com.angorasix.commons.reactive.presentation.error.resolveExceptionResponse
 import com.angorasix.notifications.application.NotificationService
 import com.angorasix.notifications.domain.notification.I18nText
 import com.angorasix.notifications.domain.notification.Notification
@@ -15,6 +17,7 @@ import com.angorasix.notifications.infrastructure.queryfilters.ListNotifications
 import com.angorasix.notifications.presentation.dto.A6PageMetadata
 import com.angorasix.notifications.presentation.dto.I18TextDto
 import com.angorasix.notifications.presentation.dto.NotificationDto
+import com.angorasix.notifications.presentation.dto.SupportedBulkPatchOperations
 import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -27,8 +30,10 @@ import org.springframework.http.HttpMethod
 import org.springframework.util.MultiValueMapAdapter
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.noContent
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.ServerResponse.status
+import org.springframework.web.reactive.function.server.awaitBody
 import org.springframework.web.reactive.function.server.bodyAndAwait
 import org.springframework.web.reactive.function.server.bodyValueAndAwait
 import org.springframework.web.reactive.function.server.buildAndAwait
@@ -108,8 +113,28 @@ class NotificationHandler(
      * @param request - HTTP `ServerRequest` object
      * @return the `ServerResponse`
      */
-    suspend fun dismissAllNotifications(request: ServerRequest): ServerResponse {
-        return status(501).contentType(MediaTypes.HAL_FORMS_JSON).buildAndAwait()
+    suspend fun patchNotifications(request: ServerRequest): ServerResponse {
+        val contributor =
+            request.attributes()[AngoraSixInfrastructure.REQUEST_ATTRIBUTE_CONTRIBUTOR_KEY]
+        val patch = request.awaitBody(BulkPatch::class)
+        return if (contributor is SimpleContributor) {
+            try {
+                val modifyOperations = patch.operations.map {
+                    it.toBulkModificationStrategy(
+                        contributor,
+                        SupportedBulkPatchOperations.values().map { it.op }.toList(),
+                    )
+                }
+                service.bulkModification(contributor, modifyOperations)
+                noContent().buildAndAwait()
+            } catch (ex: IllegalArgumentException) {
+                resolveBadRequest("Invalid Notification Patch Body", "Notification Patch")
+            } catch (ex: RuntimeException) {
+                resolveExceptionResponse(ex, "Notification Patch Body")
+            }
+        } else {
+            resolveBadRequest("Invalid Contributor Header", "Contributor Header")
+        }
     }
 
     /**
@@ -167,7 +192,7 @@ private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): Notif
         contextData,
         instantOfIssue,
         needsExplicitDismiss,
-        dismissed,
+        dismissed, // more complex dismissedForUser, maybe at some point
     )
 }
 
@@ -195,8 +220,8 @@ private fun NotificationDto.resolveHypermedia(
     add(selfLinkWithDefaultAffordance)
 
     // dismiss (for needs explicit dismiss notification)
-    if (needsExplicitDismiss && !dismissed) {
-        val dismissNotificationRoute = apiConfigs.routes.dismissNotification
+    if (needsExplicitDismiss && !dismissedForUser) {
+        val dismissNotificationRoute = apiConfigs.routes.patchNotification
         val dismissNotificationLinkName = "dismissNotification"
         val dismissNotificationLink = Link.of(
             uriBuilder(request).path(dismissNotificationRoute.resolvePath()).build()

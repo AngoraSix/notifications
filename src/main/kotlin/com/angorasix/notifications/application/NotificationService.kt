@@ -6,6 +6,7 @@ import com.angorasix.notifications.application.strategies.determineHandlingStrat
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.domain.notification.NotificationRepository
 import com.angorasix.notifications.infrastructure.config.i18n.I18nConfigKeys
+import com.angorasix.notifications.infrastructure.constants.BulkDomainModificationConstants
 import com.angorasix.notifications.infrastructure.persistence.repository.NotificationListProjection
 import com.angorasix.notifications.infrastructure.queryfilters.ListNotificationsFilter
 import kotlinx.coroutines.flow.Flow
@@ -38,10 +39,25 @@ class NotificationService(
      * @param newNotification [Notification] to persist
      * @return a [Mono] with the persisted [Notification]
      */
-    suspend fun dismissNotifications(
+    private suspend fun dismissNotifications(
         filter: ListNotificationsFilter,
         contributor: SimpleContributor,
     ) = repository.dismissForContributorUsingFilter(filter, contributor)
+
+    suspend fun bulkModification(
+        contributor: SimpleContributor,
+        modificationStrategies: List<String>,
+    ) {
+        modificationStrategies.forEach {
+            when (it) {
+                BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value -> dismissNotifications(
+                    ListNotificationsFilter(),
+                    contributor,
+                )
+                else -> throw IllegalArgumentException("Strategy $it not supported for bulk update")
+            }
+        }
+    }
 
     fun processMessage(
         message: A6InfraMessageDto,

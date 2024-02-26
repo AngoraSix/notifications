@@ -17,14 +17,14 @@ configs:
           - ${configs.api.basePaths.notifications}
         method: GET
         path: ${configs.api.routes.baseListCrudRoute}
-      dismissAllNotifications:
-        name: dismissAllNotifications
+      patchNotifications:
+        name: patchNotifications
         basePaths:
           - ${configs.api.basePaths.notifications}
         method: PATCH
         path: ${configs.api.routes.baseListCrudRoute}
-      dismissNotification:
-        name: dismissNotification
+      patchNotification:
+        name: patchNotification
         basePaths:
           - ${configs.api.basePaths.notifications}
         method: PATCH

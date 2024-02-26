@@ -26,8 +26,8 @@ data class RoutesConfigs(
     val baseByIdCrudRoute: String,
     val listNotifications: Route,
     val listenNotifications: Route,
-    val dismissNotification: Route,
-    val dismissAllNotifications: Route,
+    val patchNotifications: Route,
+    val patchNotification: Route,
 )
 
 data class Route(

@@ -110,7 +110,7 @@ private fun ListNotificationsFilter.toDismissQuery(simpleContributor: SimpleCont
     val query = Query()
     query.addCriteria(
         Criteria().andOperator(
-            where("targetType").`is`(A6DomainResource.CONTRIBUTOR),
+            where("targetType").`is`(A6DomainResource.CONTRIBUTOR.value),
             where("targetId").`is`(simpleContributor.contributorId),
         ),
     )

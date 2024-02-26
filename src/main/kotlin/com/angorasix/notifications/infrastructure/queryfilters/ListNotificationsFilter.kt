@@ -11,7 +11,7 @@ import org.springframework.util.MultiValueMap
  */
 data class ListNotificationsFilter(
     val ids: Collection<String>? = null,
-    val dismissed: Boolean?,
+    val dismissed: Boolean? = null,
     val page: Int = 0,
     val pageSize: Int = 20,
     val sort: List<Pair<String, SortOrder>> = listOf(

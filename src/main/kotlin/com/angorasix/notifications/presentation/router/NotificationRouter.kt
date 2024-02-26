@@ -34,6 +34,7 @@ class NotificationRouter(
             apiConfigs.routes.baseListCrudRoute.nest {
                 defineListenNotificationsEndpoint()
                 defineListNotificationsEndpoint()
+                definePatchNotificationsEndpoint()
             }
         }
     }
@@ -44,15 +45,9 @@ class NotificationRouter(
         }
     }
 
-    private fun CoRouterFunctionDsl.defineDismissSingleNotificationEndpoint() {
-        method(apiConfigs.routes.listNotifications.method).nest {
-            method(apiConfigs.routes.listNotifications.method, handler::listNotifications)
-        }
-    }
-
-    private fun CoRouterFunctionDsl.defineDismissAllNotificationsEndpoint() {
-        method(apiConfigs.routes.dismissAllNotifications.method).nest {
-            method(apiConfigs.routes.dismissAllNotifications.method, handler::dismissAllNotifications)
+    private fun CoRouterFunctionDsl.definePatchNotificationsEndpoint() {
+        method(apiConfigs.routes.patchNotifications.method).nest {
+            method(apiConfigs.routes.patchNotifications.method, handler::patchNotifications)
         }
     }
 
