@@ -13,13 +13,17 @@ import kotlinx.coroutines.flow.Flow
  */
 interface NotificationFilterRepository {
 
-    fun findUsingFilter(
+    suspend fun findUsingFilter(
         filter: ListNotificationsFilter,
         simpleContributor: SimpleContributor,
-    ): Flow<Notification>
+    ): NotificationListProjection
 
     suspend fun dismissForContributorUsingFilter(
         filter: ListNotificationsFilter,
         simpleContributor: SimpleContributor,
     )
+
+    fun listenNotificationsForContributor(
+        simpleContributor: SimpleContributor,
+    ): Flow<Notification?>
 }

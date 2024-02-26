@@ -26,10 +26,10 @@ class AddMemberEventStrategy : NotificationFieldMappingStrategy() {
         val messageI18n: I18nText
         val clubType = message.messageData["type"]
         if (clubType == "contributor-candidates") {
-            titleI18n = I18nText(i18nKeys.clubsContributorAddedTitle, message.targetType.value)
+            titleI18n = I18nText(i18nKeys.clubContributorAddedTitle, message.objectType)
             messageI18n = I18nText(
-                i18nKeys.clubsContributorAddedMessage,
-                message.targetType.value,
+                i18nKeys.clubContributorAddedMessage,
+                message.objectType,
                 mapOf(
                     "firstName" to (message.requestingContributor.firstName
                         ?: message.requestingContributor.contributorId),
@@ -39,15 +39,12 @@ class AddMemberEventStrategy : NotificationFieldMappingStrategy() {
             titleI18n = I18nText(i18nKeys.clubMemberAddedTitle, message.targetType.value)
             messageI18n = I18nText(
                 i18nKeys.clubMemberAddedMessage,
-                message.targetType.value,
+                message.objectType,
                 mapOf(
                     "clubType" to ((clubType as String?) ?: message.objectId),
                 ),
             )
         }
-        println("GERRRRRRRRR")
-        println(titleI18n)
-        println(messageI18n)
         builder.text(titleI18n, messageI18n)
         message.requestingContributor.profileMedia?.let { builder.media(it.toNotificationMedia()) }
         return builder.build()?.let { flowOf(it) }

@@ -1,15 +1,19 @@
 i18n:
   values:
-    clubs:
-      - "${configs.i18n.keys.clubsContributorAddedTitle}":
+    club:
+      - i18nKey: ${configs.i18n.keys.clubContributorAddedTitle}
+        i18nValues:
           en: "New interested contributor!"
           es: "¡Nuevo colaborador interesado!"
-      - ${ configs.i18n.keys.clubsContributorAddedMessage }:
+      - i18nKey: ${configs.i18n.keys.clubContributorAddedMessage}
+        i18nValues:
           en: ":firstName has shown interest in your project."
           es: ":firstName ha mostrado interes en tu proyecto."
-      - ${ configs.i18n.keys.clubMemberAddedTitle }:
+      - i18nKey: ${configs.i18n.keys.clubMemberAddedTitle}
+        i18nValues:
           en: "New club member!"
           es: "¡Nuevo miembro de club!"
-      - ${ configs.i18n.keys.clubMemberAddedMessage }:
+      - i18nKey: ${configs.i18n.keys.clubMemberAddedMessage}
+        i18nValues:
           en: "New contributor joined club :clubType"
           es: "Un nuevo miembro se ha unido al club :clubType"

@@ -11,4 +11,8 @@ spring:
     name: ${A6_NOTIFICATIONS_APP_NAME:notifications}
   data:
     mongodb:
-      uri: ${A6_NOTIFICATIONS_MONGO_DB_URI:mongodb://localhost:27017/}${A6_NOTIFICATIONS_MONGO_DB_NAME:a6-notifications}${A6_NOTIFICATIONS_MONGO_DB_PARAMS:?}
+      uri: ${A6_NOTIFICATIONS_MONGO_DB_URI:mongodb://localhost:27017/}${A6_NOTIFICATIONS_MONGO_DB_NAME:a6-notifications}${A6_NOTIFICATIONS_MONGO_DB_PARAMS:?replicaSet=myReplicaSet}
+
+logging:
+  level:
+    "[org.springframework.data.mongodb]": ${A6_NOTIFICATIONS_LOGGING_LEVEL_DATA:DEBUG}
