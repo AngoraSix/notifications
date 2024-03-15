@@ -51,8 +51,6 @@ class NotificationHandler(
     private val i18nConfigValues: I18nConfigValues,
     private val objectMapper: ObjectMapper,
 ) {
-
-
     /**
      * Handler for the List Notifications endpoint, retrieving a Flux including all persisted Notifications.
      *

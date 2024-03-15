@@ -45,7 +45,6 @@ class A6PageMetadata(pageSize: Long, page: Long, total: Long, totalToRead: Long,
     val extraSkip = extraSkip
 }
 
-
 enum class SupportedBulkPatchOperations(val op: BulkPatchOperationSpec) {
     DISMISS(
         object : BulkPatchOperationSpec {
@@ -59,5 +58,5 @@ enum class SupportedBulkPatchOperations(val op: BulkPatchOperationSpec) {
                 return BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value;
             }
         },
-    )
+    ),
 }

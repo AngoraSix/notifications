@@ -12,9 +12,7 @@ import kotlinx.coroutines.runBlocking
  * @author rozagerardo
  */
 class NotificationMessagingHandler(private val notificationService: NotificationService) {
-
     fun handleMessage(message: A6InfraMessageDto) = runBlocking {
         notificationService.processMessage(message)?.launchIn(this)
     }
 }
-
