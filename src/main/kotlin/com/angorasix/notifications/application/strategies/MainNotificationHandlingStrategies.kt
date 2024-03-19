@@ -14,9 +14,7 @@ import kotlinx.coroutines.flow.Flow
  *
  * @author rozagerardo
  */
-class MessageMapperStrategies {
-
-}
+class MessageMapperStrategies
 
 interface MainNotificationHandlingStrategy {
     fun processMessage(

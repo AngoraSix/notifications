@@ -11,10 +11,8 @@ import org.springframework.context.annotation.Configuration
  *
  * @author rozagerardo
  */
-@Configuration  // spring-cloud-streams is not prepared to handle Kotlin DSL beans: https://github.com/spring-cloud/spring-cloud-stream/issues/2025
+@Configuration // spring-cloud-streams is not prepared to handle Kotlin DSL beans: https://github.com/spring-cloud/spring-cloud-stream/issues/2025
 class NotificationMessagingRouter(val handler: NotificationMessagingHandler) {
-
     @Bean
-    fun notifications(): (A6InfraMessageDto) -> Unit =
-        { handler.handleMessage(it) }
+    fun notifications(): (A6InfraMessageDto) -> Unit = { handler.handleMessage(it) }
 }

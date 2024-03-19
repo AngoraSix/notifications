@@ -71,8 +71,6 @@ data class Notification @PersistenceCreator private constructor(
         needsExplicitDismiss,
         dismissed,
     )
-
-
     data class Builder(
         var targetId: String,
         var targetType: String,

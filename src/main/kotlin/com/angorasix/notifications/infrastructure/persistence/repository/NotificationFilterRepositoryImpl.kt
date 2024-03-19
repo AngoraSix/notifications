@@ -93,19 +93,6 @@ class NotificationFilterRepositoryImpl(val mongoOps: ReactiveMongoOperations) :
         ).listen().asFlow().map { it.body }
 }
 
-private fun ListNotificationsFilter.toQuery(simpleContributor: SimpleContributor): Query {
-    val query = Query()
-    query.addCriteria(
-        Criteria().andOperator(
-            where("targetType").`is`(A6DomainResource.CONTRIBUTOR),
-            where("targetId").`is`(simpleContributor.contributorId),
-        ),
-    )
-    dismissed?.let { query.addCriteria(where("dismissed").`is`(dismissed)) }
-
-    return query
-}
-
 private fun ListNotificationsFilter.toDismissQuery(simpleContributor: SimpleContributor): Query {
     val query = Query()
     query.addCriteria(

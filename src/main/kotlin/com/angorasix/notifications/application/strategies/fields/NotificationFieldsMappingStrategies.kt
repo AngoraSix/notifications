@@ -31,8 +31,10 @@ class AddMemberEventStrategy : NotificationFieldMappingStrategy() {
                 i18nKeys.clubContributorAddedMessage,
                 message.objectType,
                 mapOf(
-                    "firstName" to (message.requestingContributor.firstName
-                        ?: message.requestingContributor.contributorId),
+                    "firstName" to (
+                        message.requestingContributor.firstName
+                            ?: message.requestingContributor.contributorId
+                        ),
                 ),
             )
         } else {
@@ -66,7 +68,7 @@ abstract class NotificationFieldMappingStrategy {
         return internalMapNotificationFields(inputMessage, builder, i18nKeys)
     }
 
-    abstract protected fun internalMapNotificationFields(
+    protected abstract fun internalMapNotificationFields(
         inputMessage: A6InfraMessageDto,
         notificationBuilder: Notification.Builder,
         i18nKeys: I18nConfigKeys,
