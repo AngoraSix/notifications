@@ -7,6 +7,17 @@ spring:
         notifications-in-0:
           destination: ${A6_NOTIFICATIONS_RABBITMQ_EVENTS_INPUT_EXCHANGE:events} # existing exchange (or creates)?
           group: ${A6_NOTIFICATIONS_RABBITMQ_EVENTS_INPUT_QUEUE:notifications} # queue = a6-exchange.a6-queue
+      binders:
+        a6Rabbit:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: ${A6_NOTIFICATIONS_RABBITMQ_HOST:localhost}
+                port: ${A6_NOTIFICATIONS_RABBITMQ_PORT:5672}
+                username: ${A6_NOTIFICATIONS_RABBITMQ_USER:guest}
+                password: ${A6_NOTIFICATIONS_RABBITMQ_PASSWORD:guest}
+                virtual-host: ${A6_NOTIFICATIONS_RABBITMQ_VHOST:/}
     function:
       definition: notifications # to be used if we use Spring Cloud Function support https://docs.spring.io/spring-cloud-stream/reference/spring-cloud-stream/producing-and-consuming-messages.html#spring_cloud_function
 #    stream:
@@ -23,14 +34,3 @@ spring:
 #              auto-bind-dlq: true
 #              dlq-ttl: true
 #              dlq-dead-letter-exchange:
-      binders:
-        a6Rabbit:
-          type: rabbit
-          environment:
-            spring:
-              rabbitmq:
-                host: ${A6_NOTIFICATIONS_RABBITMQ_HOST:localhost}
-                port: ${A6_NOTIFICATIONS_RABBITMQ_PORT:5672}
-                username: ${A6_NOTIFICATIONS_RABBITMQ_USER:guest}
-                password: ${A6_NOTIFICATIONS_RABBITMQ_PASSWORD:guest}
-                virtual-host: ${A6_NOTIFICATIONS_RABBITMQ_VHOST:/}
