@@ -25,11 +25,13 @@ data class ListNotificationsFilter(
             multiMap: MultiValueMap<String, String>,
         ): ListNotificationsFilter {
             return ListNotificationsFilter(
-                multiMap.getFirst(ApiConstants.IDS_QUERY_PARAM.value)?.split(","),
-                multiMap.getFirst(ApiConstants.DISMISSED_QUERY_PARAM.value)?.toBoolean(),
-                multiMap.getFirst(ApiConstants.PAGE_QUERY_PARAM.value)?.toInt() ?: 0,
-                multiMap.getFirst(ApiConstants.PAGESIZE_QUERY_PARAM.value)?.toInt() ?: 20,
-                multiMap.getFirst(ApiConstants.SORT_QUERY_PARAM.value)
+                multiMap.getFirst(ApiConstants.IDS_QUERY_PARAM)?.split(","),
+                multiMap.getFirst(ApiConstants.DISMISSED_QUERY_PARAM)?.toBoolean(),
+                multiMap.getFirst(ApiConstants.PAGE_QUERY_PARAM)?.toInt()
+                    ?: ApiConstants.PAGE_DEFAULT_VALUE,
+                multiMap.getFirst(ApiConstants.PAGESIZE_QUERY_PARAM)?.toInt()
+                    ?: ApiConstants.PAGESIZE_DEFAULT_VALUE,
+                multiMap.getFirst(ApiConstants.SORT_QUERY_PARAM)
                     ?.split(",")
                     ?.map {
                         val order = it.substring(0, 1)
@@ -45,7 +47,7 @@ data class ListNotificationsFilter(
                         "dismissed" to SortOrder.DESC,
                         "instantOfCreation" to SortOrder.DESC,
                     ),
-                multiMap.getFirst(ApiConstants.EXTRA_SKIP_QUERY_PARAM.value)?.toInt() ?: 0,
+                multiMap.getFirst(ApiConstants.EXTRA_SKIP_QUERY_PARAM)?.toInt() ?: 0,
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.angorasix.notifications.infrastructure.persistence.repository
 
 import com.angorasix.notifications.domain.notification.Notification
+import com.angorasix.notifications.infrastructure.constants.ApiConstants
 import org.springframework.data.annotation.PersistenceCreator
 
 /**
@@ -26,8 +27,8 @@ data class NotificationListProjection(
         data,
         total,
         totalToRead,
-        0,
-        20,
-        0,
+        ApiConstants.PAGE_DEFAULT_VALUE,
+        ApiConstants.PAGESIZE_DEFAULT_VALUE,
+        ApiConstants.EXTRA_SKIP_DEFAULT_VALUE,
     )
 }
