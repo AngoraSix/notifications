@@ -62,7 +62,7 @@ class NotificationHandler(
                     ok().contentType(MediaTypes.HAL_FORMS_JSON).bodyValueAndAwait(it)
                 }
         } else {
-            resolveBadRequest("Invalid Contributor Header", "Contributor Header")
+            resolveBadRequest("Invalid Contributor", "Contributor")
         }
     }
 
@@ -92,7 +92,7 @@ class NotificationHandler(
                     ok().sse().bodyAndAwait(it)
                 }
         } else {
-            resolveBadRequest("Invalid Contributor Header", "Contributor Header")
+            resolveBadRequest("Invalid Contributor", "Contributor")
         }
     }
 
@@ -120,7 +120,7 @@ class NotificationHandler(
                 resolveBadRequest("Invalid Notification Patch Body", "Notification Patch")
             }
         } else {
-            resolveBadRequest("Invalid Contributor Header", "Contributor Header")
+            resolveBadRequest("Invalid Contributor", "Contributor")
         }
     }
 }

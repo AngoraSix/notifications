@@ -2,7 +2,7 @@ context:
   initializer:
     classes: com.angorasix.notifications.BeansInitializer
 server:
-  port: ${A6_NOTIFICATIONS_PORT:9088}
+  port: ${A6_NOTIFICATIONS_PORT:10102}
 
 spring:
   config:
