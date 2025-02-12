@@ -40,7 +40,7 @@ class NotificationFilterRepositoryImpl(val mongoOps: ReactiveMongoOperations) :
         simpleContributor: SimpleContributor,
     ): NotificationListProjection {
         val sortFilter = filter.sort.map { Sort.Order(mapSort(it.second), it.first) }
-        var aggregation = newAggregation(
+        val aggregation = newAggregation(
             match(
                 where("targetType").`is`(A6DomainResource.CONTRIBUTOR.value).and("targetId")
                     .`is`(simpleContributor.contributorId),
@@ -103,7 +103,7 @@ private fun ListNotificationsFilter.toDismissQuery(simpleContributor: SimpleCont
     )
     query.addCriteria(where("dismissed").`is`(false))
     query.addCriteria(where("needsExplicitDismiss").`is`(false))
-    ids?.let { query.addCriteria(where("_id").`in`(it)) }
+    ids?.let { query.addCriteria(where("_id").`in`(it as Collection<Any>)) }
     return query
 }
 
