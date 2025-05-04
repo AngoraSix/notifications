@@ -1,6 +1,6 @@
 package com.angorasix.notifications.presentation.handler
 
-import com.angorasix.commons.domain.SimpleContributor
+import com.angorasix.commons.domain.A6Contributor
 import com.angorasix.commons.infrastructure.constants.AngoraSixInfrastructure
 import com.angorasix.commons.presentation.dto.BulkPatch
 import com.angorasix.commons.presentation.handler.convertToDto
@@ -51,13 +51,14 @@ class NotificationHandler(
     suspend fun listNotifications(request: ServerRequest): ServerResponse {
         val requestingContributor =
             request.attributes()[AngoraSixInfrastructure.REQUEST_ATTRIBUTE_CONTRIBUTOR_KEY]
-        return if (requestingContributor is SimpleContributor) {
-            service.findNotifications(
-                ListNotificationsFilter.fromMultiValueMap(
-                    request.queryParams(),
-                ),
-                requestingContributor,
-            ).convertToDto(apiConfigs, request, i18nConfigValues)
+        return if (requestingContributor is A6Contributor) {
+            service
+                .findNotifications(
+                    ListNotificationsFilter.fromMultiValueMap(
+                        request.queryParams(),
+                    ),
+                    requestingContributor,
+                ).convertToDto(apiConfigs, request, i18nConfigValues)
                 .let {
                     ok().contentType(MediaTypes.HAL_FORMS_JSON).bodyValueAndAwait(it)
                 }
@@ -75,20 +76,20 @@ class NotificationHandler(
     suspend fun listenNotificationsForContributor(request: ServerRequest): ServerResponse {
         val requestingContributor =
             request.attributes()[AngoraSixInfrastructure.REQUEST_ATTRIBUTE_CONTRIBUTOR_KEY]
-        return if (requestingContributor is SimpleContributor) {
-            service.listenNotificationsForContributor(
-                requestingContributor,
-            ).map {
-                it?.convertToDto(
-                    apiConfigs,
-                    request,
-                    i18nConfigValues,
-                )
-            }
-                .map {
+        return if (requestingContributor is A6Contributor) {
+            service
+                .listenNotificationsForContributor(
+                    requestingContributor,
+                ).map {
+                    it?.convertToDto(
+                        apiConfigs,
+                        request,
+                        i18nConfigValues,
+                    )
+                }.map {
                     objectMapper.writeValueAsString(it)
-                }
-                .filterNotNull().let {
+                }.filterNotNull()
+                .let {
                     ok().sse().bodyAndAwait(it)
                 }
         } else {
@@ -106,14 +107,15 @@ class NotificationHandler(
         val contributor =
             request.attributes()[AngoraSixInfrastructure.REQUEST_ATTRIBUTE_CONTRIBUTOR_KEY]
         val patch = request.awaitBody(BulkPatch::class)
-        return if (contributor is SimpleContributor) {
+        return if (contributor is A6Contributor) {
             try {
-                val modifyOperations = patch.operations.map {
-                    it.toBulkModificationStrategy(
-                        contributor,
-                        SupportedBulkPatchOperations.values().map { it.op }.toList(),
-                    )
-                }
+                val modifyOperations =
+                    patch.operations.map {
+                        it.toBulkModificationStrategy(
+                            contributor,
+                            SupportedBulkPatchOperations.values().map { it.op }.toList(),
+                        )
+                    }
                 service.bulkModification(contributor, modifyOperations)
                 noContent().buildAndAwait()
             } catch (ignore: IllegalArgumentException) {
@@ -140,19 +142,20 @@ private fun NotificationListProjection.convertToDto(
             totalToRead.toLong(),
             extraSkip.toLong(),
         )
-    val pagedModel = if (dtoResources.isNullOrEmpty()) {
-        PagedModel.empty(pagedMetadata, NotificationDto::class.java)
-    } else {
-        PagedModel.of(dtoResources, pagedMetadata).withFallbackType(NotificationDto::class.java)
-    }
+    val pagedModel =
+        if (dtoResources.isEmpty()) {
+            PagedModel.empty(pagedMetadata, NotificationDto::class.java)
+        } else {
+            PagedModel.of(dtoResources, pagedMetadata).withFallbackType(NotificationDto::class.java)
+        }
     return pagedModel.resolveHypermedia(
         apiConfigs,
         request,
     )
 }
 
-private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): NotificationDto {
-    return NotificationDto(
+private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): NotificationDto =
+    NotificationDto(
         id,
         targetId,
         targetType,
@@ -162,40 +165,43 @@ private fun Notification.convertToDto(i18nConfigValues: I18nConfigValues): Notif
         isUnique,
         title.toDto(i18nConfigValues),
         message.toDto(i18nConfigValues),
-        instantOfCreation,
+        creationInstant,
         media?.convertToDto(),
         alertLevel,
         refUri,
         contextData,
-        instantOfIssue,
+        issuanceInstant,
         needsExplicitDismiss,
         dismissed, // more complex dismissedForUser, maybe at some point
     )
-}
 
 private fun Notification.convertToDto(
     apiConfigs: ApiConfigs,
     request: ServerRequest,
     i18nConfigValues: I18nConfigValues,
-): NotificationDto = convertToDto(i18nConfigValues).resolveHypermedia(
-    apiConfigs,
-    request,
-)
+): NotificationDto =
+    convertToDto(i18nConfigValues).resolveHypermedia(
+        apiConfigs,
+        request,
+    )
 
 private fun I18nText.toDto(i18nValues: I18nConfigValues): I18TextDto {
-    val i18nFormatted = i18nValues.values[objectType]?.get(i18nKey)?.i18nValues
-        ?.map { (locale, valueWithPlaceholder) ->
-            val formattedText =
-                placeholderParams?.entries?.fold(valueWithPlaceholder) { accString, (pattern, newReplacement) ->
-                    accString.replace(":$pattern", newReplacement)
-                } ?: valueWithPlaceholder
-            (locale to formattedText).toEntry()
-        }
-        ?.associateBy({ it.key }, { it.value }) ?: emptyMap()
+    val i18nFormatted =
+        i18nValues.values[objectType]
+            ?.get(i18nKey)
+            ?.i18nValues
+            ?.map { (locale, valueWithPlaceholder) ->
+                val formattedText =
+                    placeholderParams?.entries?.fold(valueWithPlaceholder) { accString, (pattern, newReplacement) ->
+                        accString.replace(":$pattern", newReplacement)
+                    } ?: valueWithPlaceholder
+                (locale to formattedText).toEntry()
+            }?.associateBy({ it.key }, { it.value }) ?: emptyMap()
     return I18TextDto(i18nFormatted)
 }
 
-fun <K, V> Pair<K, V>.toEntry() = object : Map.Entry<K, V> {
-    override val key: K = first
-    override val value: V = second
-}
+fun <K, V> Pair<K, V>.toEntry() =
+    object : Map.Entry<K, V> {
+        override val key: K = first
+        override val value: V = second
+    }

@@ -27,24 +27,39 @@ fun NotificationDto.resolveHypermedia(
         apiConfigs.routes.listenNotifications // TODO change this need get single notification?
     // self
     val selfLink =
-        Link.of(uriBuilder(request).path(getSingleRoute.resolvePath()).build().toUriString())
-            .withRel(getSingleRoute.name).expand(id).withSelfRel()
+        Link
+            .of(uriBuilder(request).path(getSingleRoute.resolvePath()).build().toUriString())
+            .withRel(getSingleRoute.name)
+            .expand(id)
+            .withSelfRel()
     val selfLinkWithDefaultAffordance =
-        Affordances.of(selfLink).afford(HttpMethod.OPTIONS).withName("default").toLink()
+        Affordances
+            .of(selfLink)
+            .afford(HttpMethod.OPTIONS)
+            .withName("default")
+            .toLink()
     add(selfLinkWithDefaultAffordance)
 
     // dismiss (for needs explicit dismiss notification)
     if (needsExplicitDismiss && !dismissedForUser) {
         val dismissNotificationRoute = apiConfigs.routes.patchNotification
         val dismissNotificationLinkName = "dismissNotification"
-        val dismissNotificationLink = Link.of(
-            uriBuilder(request).path(dismissNotificationRoute.resolvePath()).build()
-                .toUriString(),
-        ).withTitle(dismissNotificationLinkName).withName(dismissNotificationLinkName)
-            .withRel(dismissNotificationLinkName)
+        val dismissNotificationLink =
+            Link
+                .of(
+                    uriBuilder(request)
+                        .path(dismissNotificationRoute.resolvePath())
+                        .build()
+                        .toUriString(),
+                ).withTitle(dismissNotificationLinkName)
+                .withName(dismissNotificationLinkName)
+                .withRel(dismissNotificationLinkName)
         val dismissNotificationAffordanceLink =
-            Affordances.of(dismissNotificationLink).afford(dismissNotificationRoute.method)
-                .withName(dismissNotificationLinkName).toLink()
+            Affordances
+                .of(dismissNotificationLink)
+                .afford(dismissNotificationRoute.method)
+                .withName(dismissNotificationLinkName)
+                .toLink()
         add(dismissNotificationAffordanceLink)
     }
 
@@ -57,11 +72,18 @@ fun PagedModel<NotificationDto>.resolveHypermedia(
 ): PagedModel<NotificationDto> {
     val listAllRoute = apiConfigs.routes.listNotifications
     // self
-    val selfLink = Link.of(
-        uriBuilder(request).path(listAllRoute.resolvePath()).build().toUriString(),
-    ).withRel(listAllRoute.name).withSelfRel()
+    val selfLink =
+        Link
+            .of(
+                uriBuilder(request).path(listAllRoute.resolvePath()).build().toUriString(),
+            ).withRel(listAllRoute.name)
+            .withSelfRel()
     val selfLinkWithDefaultAffordance =
-        Affordances.of(selfLink).afford(HttpMethod.OPTIONS).withName("default").toLink()
+        Affordances
+            .of(selfLink)
+            .afford(HttpMethod.OPTIONS)
+            .withName("default")
+            .toLink()
     add(selfLinkWithDefaultAffordance)
 
     // listen
@@ -85,15 +107,23 @@ private fun PagedModel<NotificationDto>.addListenLink(
 ) {
     val listenNotificationsRoute = apiConfigs.routes.listenNotifications
     val listenNotificationsLinkName = "listenNotifications"
-    val listenNotificationsLink = Link.of(
-        uriBuilder(request).path(listenNotificationsRoute.resolvePath()).replaceQueryParams(null)
-            .build()
-            .toUriString(),
-    ).withTitle(listenNotificationsLinkName).withName(listenNotificationsLinkName)
-        .withRel(listenNotificationsLinkName)
+    val listenNotificationsLink =
+        Link
+            .of(
+                uriBuilder(request)
+                    .path(listenNotificationsRoute.resolvePath())
+                    .replaceQueryParams(null)
+                    .build()
+                    .toUriString(),
+            ).withTitle(listenNotificationsLinkName)
+            .withName(listenNotificationsLinkName)
+            .withRel(listenNotificationsLinkName)
     val listenNotificationsAffordanceLink =
-        Affordances.of(listenNotificationsLink).afford(listenNotificationsRoute.method)
-            .withName(listenNotificationsLinkName).toLink()
+        Affordances
+            .of(listenNotificationsLink)
+            .afford(listenNotificationsRoute.method)
+            .withName(listenNotificationsLinkName)
+            .toLink()
     add(listenNotificationsAffordanceLink)
 }
 
@@ -107,16 +137,23 @@ private fun PagedModel<NotificationDto>.addNextLink(
         ApiConstants.PAGE_QUERY_PARAM,
         mutableListOf(metadata?.number?.plus(1).toString()),
     )
-    val loadMoreLink = Link.of(
-        uriBuilder(request).path(listAllRoute.resolvePath())
-            .queryParams(MultiValueMapAdapter(loadMoreQueryParams))
-            .build()
-            .toUriString(),
-    ).withTitle(loadMoreLinkName).withName(loadMoreLinkName)
-        .withRel(loadMoreLinkName)
+    val loadMoreLink =
+        Link
+            .of(
+                uriBuilder(request)
+                    .path(listAllRoute.resolvePath())
+                    .queryParams(MultiValueMapAdapter(loadMoreQueryParams))
+                    .build()
+                    .toUriString(),
+            ).withTitle(loadMoreLinkName)
+            .withName(loadMoreLinkName)
+            .withRel(loadMoreLinkName)
     val loadMoreAffordanceLink =
-        Affordances.of(loadMoreLink).afford(listAllRoute.method)
-            .withName(loadMoreLinkName).toLink()
+        Affordances
+            .of(loadMoreLink)
+            .afford(listAllRoute.method)
+            .withName(loadMoreLinkName)
+            .toLink()
     add(loadMoreAffordanceLink)
 }
 
@@ -130,19 +167,27 @@ private fun PagedModel<NotificationDto>.addPreviousLink(
         ApiConstants.PAGE_QUERY_PARAM,
         mutableListOf(metadata?.number?.plus(1).toString()),
     )
-    val previousLink = Link.of(
-        uriBuilder(request).path(listAllRoute.resolvePath())
-            .queryParams(MultiValueMapAdapter(previousQueryParams))
-            .build()
-            .toUriString(),
-    ).withTitle(previousLinkName).withName(previousLinkName)
-        .withRel(previousLinkName)
+    val previousLink =
+        Link
+            .of(
+                uriBuilder(request)
+                    .path(listAllRoute.resolvePath())
+                    .queryParams(MultiValueMapAdapter(previousQueryParams))
+                    .build()
+                    .toUriString(),
+            ).withTitle(previousLinkName)
+            .withName(previousLinkName)
+            .withRel(previousLinkName)
     val previousAffordanceLink =
-        Affordances.of(previousLink).afford(listAllRoute.method)
-            .withName(previousLinkName).toLink()
+        Affordances
+            .of(previousLink)
+            .afford(listAllRoute.method)
+            .withName(previousLinkName)
+            .toLink()
     add(previousAffordanceLink)
 }
 
-private fun uriBuilder(request: ServerRequest) = request.requestPath().contextPath().let {
-    UriComponentsBuilder.fromHttpRequest(request.exchange().request).replacePath(it.toString())
-}
+private fun uriBuilder(request: ServerRequest) =
+    request.requestPath().contextPath().let {
+        UriComponentsBuilder.fromHttpRequest(request.exchange().request).replacePath(it.toString())
+    }

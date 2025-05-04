@@ -1,6 +1,6 @@
 package com.angorasix.notifications.presentation.dto
 
-import com.angorasix.commons.domain.SimpleContributor
+import com.angorasix.commons.domain.A6Contributor
 import com.angorasix.commons.presentation.dto.A6MediaDto
 import com.angorasix.commons.presentation.dto.BulkPatchOperation
 import com.angorasix.commons.presentation.dto.BulkPatchOperationSpec
@@ -37,26 +37,33 @@ data class NotificationDto(
     val dismissedForUser: Boolean,
 ) : RepresentationModel<NotificationDto>()
 
-data class I18TextDto(@JsonUnwrapped val i18n: Map<String, String>)
+data class I18TextDto(
+    @JsonUnwrapped val i18n: Map<String, String>,
+)
 
-class A6PageMetadata(pageSize: Long, page: Long, total: Long, totalToRead: Long, extraSkip: Long) :
-    PagedModel.PageMetadata(pageSize, page, total) {
+class A6PageMetadata(
+    pageSize: Long,
+    page: Long,
+    total: Long,
+    totalToRead: Long,
+    extraSkip: Long,
+) : PagedModel.PageMetadata(pageSize, page, total) {
     val totalToRead = totalToRead
     val extraSkip = extraSkip
 }
 
-enum class SupportedBulkPatchOperations(val op: BulkPatchOperationSpec) {
+enum class SupportedBulkPatchOperations(
+    val op: BulkPatchOperationSpec,
+) {
     DISMISS(
         object : BulkPatchOperationSpec {
             override fun supportsPatchOperation(operation: BulkPatchOperation): Boolean =
                 operation.op == "replace" && operation.path == "/dismissed" && (operation.value?.booleanValue() == true)
 
             override fun mapToStrategyId(
-                contributor: SimpleContributor,
+                contributor: A6Contributor,
                 operation: BulkPatchOperation,
-            ): String {
-                return BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value;
-            }
+            ): String = BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value
         },
     ),
 }
