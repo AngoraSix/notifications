@@ -19,7 +19,9 @@ data class ApiConfigs(
     var basePaths: BasePathConfigs,
 )
 
-data class BasePathConfigs(val notifications: String)
+data class BasePathConfigs(
+    val notifications: String,
+)
 
 data class RoutesConfigs(
     val baseListCrudRoute: String,
@@ -36,6 +38,5 @@ data class Route(
     val method: HttpMethod,
     val path: String,
 ) {
-
     fun resolvePath(): String = basePaths.joinToString("").plus(path)
 }

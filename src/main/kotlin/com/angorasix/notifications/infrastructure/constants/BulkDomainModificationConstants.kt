@@ -6,6 +6,8 @@ package com.angorasix.notifications.infrastructure.constants
  *
  * @author rozagerardo
  */
-enum class BulkDomainModificationConstants(val value: String) {
+enum class BulkDomainModificationConstants(
+    val value: String,
+) {
     DISMISS_FOR_CONTRIBUTOR_STRATEGY("dismissForContributor"),
 }

@@ -17,27 +17,27 @@ class NotificationRouter(
     private val handler: NotificationHandler,
     private val apiConfigs: ApiConfigs,
 ) {
-
     /**
      * Main RouterFunction configuration for all endpoints related to Notifications.
      *
      * @return the [RouterFunction] with all the routes for Notifications
      */
-    fun notificationRouterFunction() = coRouter {
-        filter { request, next ->
-            extractRequestingContributor(
-                request,
-                next,
-            )
-        }
-        apiConfigs.basePaths.notifications.nest {
-            apiConfigs.routes.baseListCrudRoute.nest {
-                defineListenNotificationsEndpoint()
-                defineListNotificationsEndpoint()
-                definePatchNotificationsEndpoint()
+    fun notificationRouterFunction() =
+        coRouter {
+            filter { request, next ->
+                extractRequestingContributor(
+                    request,
+                    next,
+                )
+            }
+            apiConfigs.basePaths.notifications.nest {
+                apiConfigs.routes.baseListCrudRoute.nest {
+                    defineListenNotificationsEndpoint()
+                    defineListNotificationsEndpoint()
+                    definePatchNotificationsEndpoint()
+                }
             }
         }
-    }
 
     private fun CoRouterFunctionDsl.defineListNotificationsEndpoint() {
         method(apiConfigs.routes.listNotifications.method).nest {

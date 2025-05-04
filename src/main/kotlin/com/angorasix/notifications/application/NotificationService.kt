@@ -1,7 +1,7 @@
 package com.angorasix.notifications.application
 
-import com.angorasix.commons.domain.SimpleContributor
-import com.angorasix.commons.infrastructure.intercommunication.messaging.dto.A6InfraMessageDto
+import com.angorasix.commons.domain.A6Contributor
+import com.angorasix.commons.infrastructure.intercommunication.messaging.A6InfraMessageDto
 import com.angorasix.notifications.application.strategies.determineHandlingStrategy
 import com.angorasix.notifications.domain.notification.Notification
 import com.angorasix.notifications.domain.notification.NotificationRepository
@@ -22,7 +22,6 @@ class NotificationService(
     private val repository: NotificationRepository,
     private val i18nKeys: I18nConfigKeys,
 ) {
-
     /**
      * Method to retrieve a collection of [Notification]s.
      *
@@ -30,7 +29,7 @@ class NotificationService(
      */
     suspend fun findNotifications(
         filter: ListNotificationsFilter,
-        contributor: SimpleContributor,
+        contributor: A6Contributor,
     ): NotificationListProjection = repository.findUsingFilter(filter, contributor)
 
     /**
@@ -41,29 +40,29 @@ class NotificationService(
      */
     private suspend fun dismissNotifications(
         filter: ListNotificationsFilter,
-        contributor: SimpleContributor,
+        contributor: A6Contributor,
     ) = repository.dismissForContributorUsingFilter(filter, contributor)
 
     suspend fun bulkModification(
-        contributor: SimpleContributor,
+        contributor: A6Contributor,
         modificationStrategies: List<String>,
     ) {
         modificationStrategies.forEach {
             when (it) {
-                BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value -> dismissNotifications(
-                    ListNotificationsFilter(),
-                    contributor,
-                )
+                BulkDomainModificationConstants.DISMISS_FOR_CONTRIBUTOR_STRATEGY.value ->
+                    dismissNotifications(
+                        ListNotificationsFilter(),
+                        contributor,
+                    )
+
                 else -> throw IllegalArgumentException("Strategy $it not supported for bulk update")
             }
         }
     }
 
-    fun processMessage(
-        message: A6InfraMessageDto,
-    ): Flow<Notification>? =
+    fun processMessage(message: A6InfraMessageDto<Map<String, Any>>): Flow<Notification>? =
         determineHandlingStrategy(message)?.processMessage(message, repository, i18nKeys)
 
-    fun listenNotificationsForContributor(contributor: SimpleContributor): Flow<Notification?> =
+    fun listenNotificationsForContributor(contributor: A6Contributor): Flow<Notification?> =
         repository.listenNotificationsForContributor(contributor)
 }

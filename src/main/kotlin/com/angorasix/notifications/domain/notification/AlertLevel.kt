@@ -6,7 +6,9 @@ package com.angorasix.notifications.domain.notification
  *
  * @author rozagerardo
  */
-enum class AlertLevel(val code: String) {
+enum class AlertLevel(
+    val code: String,
+) {
     INFO("info"),
     ERROR("error"),
     WARN("warn"),
